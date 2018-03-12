@@ -23,7 +23,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@android:drawable/ic_menu_save"
-                android:drawableBottom=""
                 android:elevation="0dp"
                 android:text="Salvar" />
         </android.support.v7.widget.Toolbar>
