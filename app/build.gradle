@@ -41,4 +41,6 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     //Conversao de Json
     compile 'com.squareup.retrofit2:converter-jackson:2.3.0'
+
+    compile 'com.android.support:recyclerview-v7:26.1.0'
 }

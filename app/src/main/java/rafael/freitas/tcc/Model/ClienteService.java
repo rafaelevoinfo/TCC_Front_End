@@ -4,6 +4,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
@@ -20,5 +21,10 @@ public interface ClienteService {
     @GET("auth")
     Call<StatusRetorno> autenticar(@Header("Authorization") String authorization);
 
+    @POST("clientes")
+    Call<StatusRetorno> salvar(@Body Cliente cliente);
+
+    @DELETE("clientes/{cpf}")
+    Call<StatusRetorno> excluir(@Path("cpf")String cpf);
 
 }

@@ -13,17 +13,28 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".View.LoginActivity"
-            android:label="@string/app_bemvindo"></activity>
+            android:label="@string/app_bemvindo">
+
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        </activity>
         <activity
             android:name=".View.ClienteActivity"
             android:label="@string/title_activity_cliente"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".View.LoginActivity" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".View.LoginActivity" />
             <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+
+                <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
 
             <meta-data
@@ -32,8 +43,13 @@
         </activity>
         <activity
             android:name=".View.CadastroClienteActivity"
-            android:label="@string/title_activity_cadastro_cliente"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:label="@string/cadastro_cliente"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".View.ClienteActivity" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".View.ClienteActivity" />></activity>
     </application>
 
 </manifest>
