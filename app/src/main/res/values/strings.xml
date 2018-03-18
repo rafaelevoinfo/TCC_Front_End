@@ -15,7 +15,7 @@
     <!--MENU-->
     <string name="pesquisar">Pesquisar</string>
     <string name="search_hint">Procure por Nome ou CPF</string>
-    <string name="title_activity_cadastro_cliente">Cliente</string>
-    <string name="salvar_cliente">Salvar</string>
-    <string name="cadastro_cliente">Cadastro Cliente</string>
+    <string name="title_activity_cadastro_usuario">Usuário</string>
+    <string name="salvar_usuario">Salvar</string>
+    <string name="cadastro_usuario">Cadastro Usuário</string>
 </resources>

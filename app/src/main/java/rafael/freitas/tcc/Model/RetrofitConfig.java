@@ -14,8 +14,8 @@ public class RetrofitConfig {
                 .build();
     }
 
-    public ClienteService getClienteService() {
-        return this.retrofit.create(ClienteService.class);
+    public UsuarioService getUsuarioService() {
+        return this.retrofit.create(UsuarioService.class);
     }
 
 }

@@ -15,21 +15,21 @@ import android.widget.TextView;
 import java.util.List;
 
 import rafael.freitas.tcc.Model.CallbackModel;
-import rafael.freitas.tcc.Model.Cliente;
+import rafael.freitas.tcc.Model.Usuario;
 import rafael.freitas.tcc.R;
 
 /**
  * Created by rafae on 13/03/2018.
  */
 
-public class ClienteAdapter extends ArrayAdapter<Cliente> {
+public class UsuarioAdapter extends ArrayAdapter<Usuario> {
     private int resource;
     private LayoutInflater inflater;
     private Animation aninPressButton;
-    private CallbackModel<Cliente> callback;
+    private CallbackModel<Usuario> callback;
 
-    public ClienteAdapter(@NonNull Context context, int resource, List<Cliente> clientes, CallbackModel<Cliente> callback) {
-        super(context, resource, clientes);
+    public UsuarioAdapter(@NonNull Context context, int resource, List<Usuario> usuarios, CallbackModel<Usuario> callback) {
+        super(context, resource, usuarios);
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.callback = callback;
         this.resource = resource;
@@ -62,8 +62,6 @@ public class ClienteAdapter extends ArrayAdapter<Cliente> {
                         if (callback != null){
                             callback.execute(getItem(position));
                         }
-                        remove(getItem(position));
-                        ClienteAdapter.this.notifyDataSetChanged();
                     }
                 }, 250);
             }

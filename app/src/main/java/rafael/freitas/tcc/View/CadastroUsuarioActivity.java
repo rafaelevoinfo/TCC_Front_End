@@ -16,16 +16,14 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import java.util.List;
-
 import rafael.freitas.tcc.Model.CallbackModel;
-import rafael.freitas.tcc.Model.Cliente;
+import rafael.freitas.tcc.Model.Usuario;
 import rafael.freitas.tcc.Model.StatusRetorno;
 import rafael.freitas.tcc.R;
 import rafael.freitas.tcc.Utils.Utils;
-import rafael.freitas.tcc.ViewModel.ClienteViewModel;
+import rafael.freitas.tcc.ViewModel.UsuarioViewModel;
 
-public class CadastroClienteActivity extends AppCompatActivity {
+public class CadastroUsuarioActivity extends AppCompatActivity {
 
     public static final String CPF = "CPF";
     public static final int RESULTADO = 0;
@@ -40,14 +38,14 @@ public class CadastroClienteActivity extends AppCompatActivity {
     private EditText edtTelefone;
     private ProgressBar pbProgressoSalvar;
 
-    private Cliente cliente;
-    private ClienteViewModel viewModel;
+    private Usuario usuario;
+    private UsuarioViewModel viewModel;
     private boolean inserindo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cadastro_cliente);
+        setContentView(R.layout.activity_cadastro_usuario);
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -63,16 +61,16 @@ public class CadastroClienteActivity extends AppCompatActivity {
         edtEstado = (EditText) findViewById(R.id.edtEstado);
         pbProgressoSalvar = (ProgressBar) findViewById(R.id.pbProgressoSalvar);
 
-        viewModel = ViewModelProviders.of(this).get(ClienteViewModel.class);
-        final Observer<Cliente> vaObserver = new Observer<Cliente>() {
+        viewModel = ViewModelProviders.of(this).get(UsuarioViewModel.class);
+        final Observer<Usuario> vaObserver = new Observer<Usuario>() {
             @Override
-            public void onChanged(@Nullable Cliente cliente) {
+            public void onChanged(@Nullable Usuario cliente) {
                 if (cliente!=null) {
-                    CadastroClienteActivity.this.cliente = cliente;
+                    CadastroUsuarioActivity.this.usuario = cliente;
                     preencherEdits();
                 }else{
-                    //Algo deu errado e nao achou o cliente
-                    Toast.makeText(CadastroClienteActivity.this,"Nao foi possível carregar as informações do cliente",Toast.LENGTH_LONG).show();
+                    //Algo deu errado e nao achou o usuario
+                    Toast.makeText(CadastroUsuarioActivity.this,"Nao foi possível carregar as informações do usuario",Toast.LENGTH_LONG).show();
                 }
             }
         };
@@ -80,8 +78,8 @@ public class CadastroClienteActivity extends AppCompatActivity {
         Intent it = getIntent();
         inserindo = it.getStringExtra(CPF) == null;
         if (!inserindo) {
-            //Carregando as informações do cliente
-            MutableLiveData<Cliente> vaLiveData = viewModel.getCliente();
+            //Carregando as informações do usuario
+            MutableLiveData<Usuario> vaLiveData = viewModel.getCliente();
             vaLiveData.observe(this, vaObserver);
 
             viewModel.pesquisarClienteCPF(it.getStringExtra(CPF));
@@ -91,14 +89,14 @@ public class CadastroClienteActivity extends AppCompatActivity {
     }
 
     private void preencherEdits() {
-        if (cliente!=null) {
-            edtCpf.setText(cliente.getCpf());
-            edtNome.setText(cliente.getNome());
-            edtEstado.setText(cliente.getEstado());
-            edtMunicipio.setText(cliente.getMunicipio());
-            edtEndereco.setText(cliente.getEndereco());
-            edtTelefone.setText(cliente.getTelefone());
-            edtEmail.setText(cliente.getEmail());
+        if (usuario !=null) {
+            edtCpf.setText(usuario.getCpf());
+            edtNome.setText(usuario.getNome());
+            edtEstado.setText(usuario.getEstado());
+            edtMunicipio.setText(usuario.getMunicipio());
+            edtEndereco.setText(usuario.getEndereco());
+            edtTelefone.setText(usuario.getTelefone());
+            edtEmail.setText(usuario.getEmail());
         }
     }
 
@@ -129,16 +127,16 @@ public class CadastroClienteActivity extends AppCompatActivity {
     public boolean preencherCliente(){
         if (validarDados()) {
             if (inserindo)
-                cliente = new Cliente();
+                usuario = new Usuario();
 
-            cliente.setCpf(edtCpf.getText().toString());
-            cliente.setNome(edtNome.getText().toString());
-            cliente.setEstado(edtEstado.getText().toString());
-            cliente.setMunicipio(edtMunicipio.getText().toString());
-            cliente.setEndereco(edtEndereco.getText().toString());
-            cliente.setTelefone(edtTelefone.getText().toString());
-            cliente.setEmail(edtEmail.getText().toString());
-            cliente.setSenha(edtSenha.getText().toString());
+            usuario.setCpf(edtCpf.getText().toString());
+            usuario.setNome(edtNome.getText().toString());
+            usuario.setEstado(edtEstado.getText().toString());
+            usuario.setMunicipio(edtMunicipio.getText().toString());
+            usuario.setEndereco(edtEndereco.getText().toString());
+            usuario.setTelefone(edtTelefone.getText().toString());
+            usuario.setEmail(edtEmail.getText().toString());
+            usuario.setSenha(edtSenha.getText().toString());
             return true;
         }else {
             return false;
@@ -148,7 +146,7 @@ public class CadastroClienteActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
-        tb.inflateMenu(R.menu.menu_cadastro_cliente);
+        tb.inflateMenu(R.menu.menu_cadastro_usuario);
         return true;
     }
 
@@ -158,17 +156,17 @@ public class CadastroClienteActivity extends AppCompatActivity {
             case android.R.id.home:
                 this.finish();
                 return true;
-            case R.id.menu_salvar_cliente:
+            case R.id.menu_salvar_usuario:
                 if (preencherCliente()) {
                     showProgress(true);
-                    CadastroClienteActivity.this.viewModel.salvar(CadastroClienteActivity.this.cliente, new CallbackModel<StatusRetorno>() {
+                    CadastroUsuarioActivity.this.viewModel.salvar(CadastroUsuarioActivity.this.usuario, new CallbackModel<StatusRetorno>() {
                         @Override
                         public void execute(StatusRetorno resultado) {
                             if (!resultado.getStatus().equals(Utils.STATUS_OK)) {
                                 showProgress(false);
-                                Toast.makeText(CadastroClienteActivity.this, resultado.getStatus(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(CadastroUsuarioActivity.this, resultado.getStatus(), Toast.LENGTH_LONG).show();
                             } else {
-                                CadastroClienteActivity.this.finish();
+                                CadastroUsuarioActivity.this.finish();
                             }
                         }
                     });

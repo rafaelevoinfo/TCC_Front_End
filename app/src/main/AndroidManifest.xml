@@ -15,13 +15,13 @@
             android:name=".View.LoginActivity"
             android:label="@string/app_bemvindo">
 
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
-            android:name=".View.ClienteActivity"
+            android:name=".View.UsuarioActivity"
             android:label="@string/title_activity_cliente"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar"
@@ -31,8 +31,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".View.LoginActivity" />
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <!--<action android:name="android.intent.action.MAIN" />-->
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
 
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -42,14 +42,14 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity
-            android:name=".View.CadastroClienteActivity"
-            android:label="@string/cadastro_cliente"
+            android:name=".View.CadastroUsuarioActivity"
+            android:label="@string/cadastro_usuario"
             android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".View.ClienteActivity" >
+            android:parentActivityName=".View.UsuarioActivity" >
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".View.ClienteActivity" />></activity>
+                android:value=".View.UsuarioActivity" />></activity>
     </application>
 
 </manifest>

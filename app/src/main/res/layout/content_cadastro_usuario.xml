@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="rafael.freitas.tcc.View.CadastroClienteActivity"
-    tools:showIn="@layout/activity_cadastro_cliente">
+    tools:context="rafael.freitas.tcc.View.CadastroUsuarioActivity"
+    tools:showIn="@layout/activity_cadastro_usuario">
 
     <EditText
         android:id="@+id/edtNome"

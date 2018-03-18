@@ -1,18 +1,8 @@
 package rafael.freitas.tcc.Model;
 
-import android.arch.lifecycle.LiveData;
-import android.util.Base64;
-
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.List;
 
-import rafael.freitas.tcc.Utils.Utils;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-public class Cliente extends Modelo implements Serializable{
+public class Usuario extends Modelo implements Serializable{
     private String cpf;
     private String nome;
     private String endereco;
@@ -92,7 +82,7 @@ public class Cliente extends Modelo implements Serializable{
 
     @Override
     public boolean equals(Object obj) {
-        return this.cpf.equals(((Cliente)obj).getCpf());
+        return this.cpf.equals(((Usuario)obj).getCpf());
     }
 
 }

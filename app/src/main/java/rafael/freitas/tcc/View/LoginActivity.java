@@ -6,31 +6,19 @@ import android.annotation.TargetApi;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
-
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import rafael.freitas.tcc.Model.CallbackModel;
 import rafael.freitas.tcc.Model.StatusRetorno;
@@ -140,7 +128,7 @@ public class LoginActivity extends AppCompatActivity {
                 public void execute(StatusRetorno resultado) {
                     if (resultado != null) {
                         if (resultado.getStatus().equals(Utils.STATUS_OK)) {
-                            Intent intent = new Intent(LoginActivity.this, ClienteActivity.class);
+                            Intent intent = new Intent(LoginActivity.this, UsuarioActivity.class);
                             startActivity(intent);
                         } else {
                             showProgress(false);

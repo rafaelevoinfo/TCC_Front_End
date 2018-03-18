@@ -10,21 +10,21 @@ import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 
-public interface ClienteService {
+public interface UsuarioService {
 
-    @GET("clientes/{cpf_nome}")
-    Call<List<Cliente>> pesquisarClientes(@Path("cpf_nome") String cpfOuNome);
+    @GET("usuarios/{cpf_nome}")
+    Call<List<Usuario>> pesquisarUsuarios(@Path("cpf_nome") String cpfOuNome);
 
-    @GET("clientes")
-    Call<List<Cliente>> pesquisarClientes();
+    @GET("usuarios")
+    Call<List<Usuario>> pesquisarUsuarios();
 
     @GET("auth")
     Call<StatusRetorno> autenticar(@Header("Authorization") String authorization);
 
-    @POST("clientes")
-    Call<StatusRetorno> salvar(@Body Cliente cliente);
+    @POST("usuarios")
+    Call<StatusRetorno> salvar(@Body Usuario usuario);
 
-    @DELETE("clientes/{cpf}")
+    @DELETE("usuarios/{cpf}")
     Call<StatusRetorno> excluir(@Path("cpf")String cpf);
 
 }
