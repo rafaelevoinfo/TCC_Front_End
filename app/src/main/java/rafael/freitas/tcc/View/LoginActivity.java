@@ -24,7 +24,7 @@ import rafael.freitas.tcc.Model.CallbackModel;
 import rafael.freitas.tcc.Model.StatusRetorno;
 import rafael.freitas.tcc.R;
 import rafael.freitas.tcc.Utils.Utils;
-import rafael.freitas.tcc.ViewModel.AutenticacaoViewModel;
+import rafael.freitas.tcc.ViewModel.ViewModelAutenticacao;
 
 /**
  * A login screen that offers login via email/password.
@@ -41,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
     private View mProgressView;
     private View mLoginFormView;
 
-    private AutenticacaoViewModel autenticacaoViewModel;
+    private ViewModelAutenticacao viewModelAutenticacao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
-        autenticacaoViewModel = ViewModelProviders.of(this).get(AutenticacaoViewModel.class);
+        viewModelAutenticacao = ViewModelProviders.of(this).get(ViewModelAutenticacao.class);
        /* FAutenticacaoViewModel.getUsers().observe(this, users -> {
             // update UI
         });*/
@@ -123,7 +123,7 @@ public class LoginActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            autenticacaoViewModel.autenticar(mEmailView.getText().toString(), mPasswordView.getText().toString(), new CallbackModel<StatusRetorno>() {
+            viewModelAutenticacao.autenticar(mEmailView.getText().toString(), mPasswordView.getText().toString(), new CallbackModel<StatusRetorno>() {
                 @Override
                 public void execute(StatusRetorno resultado) {
                     if (resultado != null) {

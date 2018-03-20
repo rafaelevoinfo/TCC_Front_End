@@ -6,21 +6,20 @@ import java.util.List;
 
 import rafael.freitas.tcc.Utils.Utils;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
  * Created by rafae on 12/03/2018.
  */
 
-public class UsuarioDao {
-    public void autenticar(String email, String senha, final CallbackModel callback) {
+public class UsuarioDao extends BasicoDaoCrud<Usuario,StatusRetorno> {
+    public void autenticar(String email, String senha, final CallbackModel<StatusRetorno> callback) {
         String vaSenhaCripto = Utils.md5(senha);
         String vaCredenciais = email + ":" + vaSenhaCripto;
         String vaAuth = "Basic " + Base64.encodeToString(vaCredenciais.getBytes(), Base64.NO_WRAP);
 
         Call<StatusRetorno> vaCall = new RetrofitConfig().getUsuarioService().autenticar(vaAuth);
-        vaCall.enqueue(new Callback<StatusRetorno>() {
+        vaCall.enqueue(new retrofit2.Callback<StatusRetorno>() {
             @Override
             public void onResponse(Call<StatusRetorno> call, Response<StatusRetorno> response) {
                 callback.execute(response.body());
@@ -35,14 +34,15 @@ public class UsuarioDao {
         });
     }
 
-    public void pesquisarClientes(String cpfOuNome, final CallbackModels<List<Usuario>> callback) {
+    @Override
+    public void buscar(String filtro, final CallbackModels<StatusRetorno, List<Usuario>> callback) {
         Call<List<Usuario>> vaCall = null;
-        if (cpfOuNome.trim().isEmpty()) {
+        if (filtro.trim().isEmpty()) {
             vaCall = new RetrofitConfig().getUsuarioService().pesquisarUsuarios();
         } else {
-            vaCall = new RetrofitConfig().getUsuarioService().pesquisarUsuarios(cpfOuNome);
+            vaCall = new RetrofitConfig().getUsuarioService().pesquisarUsuarios(filtro);
         }
-        vaCall.enqueue(new Callback<List<Usuario>>() {
+        vaCall.enqueue(new retrofit2.Callback<List<Usuario>>() {
             @Override
             public void onResponse(Call<List<Usuario>> call, Response<List<Usuario>> response) {
                 callback.execute(new StatusRetorno(Utils.STATUS_OK), response.body());
@@ -55,10 +55,10 @@ public class UsuarioDao {
         });
     }
 
-    public void carregarCliente(String cpf, final CallbackModel<Usuario> callback) {
+    public void buscarPorCpf(String cpf, final CallbackModel<Usuario> callback) {
         Call<List<Usuario>> vaCall = new RetrofitConfig().getUsuarioService().pesquisarUsuarios(cpf);
         //NAO SE PODE USAR O .EXECUTE PQ NAS VERSOES 4.0 OU MAIOR DO ANDROID DA UMA EXCEPTION DE NetworkOnMainThreadException
-        vaCall.enqueue(new Callback<List<Usuario>>() {
+        vaCall.enqueue(new retrofit2.Callback<List<Usuario>>() {
             @Override
             public void onResponse(Call<List<Usuario>> call, Response<List<Usuario>> response) {
                 if ((response.isSuccessful())&&(response.body().size()>0))
@@ -74,9 +74,11 @@ public class UsuarioDao {
         });
     }
 
+
+    @Override
     public void salvar(Usuario usuario, final CallbackModel<StatusRetorno> callback){
         Call<StatusRetorno> vaCall = new RetrofitConfig().getUsuarioService().salvar(usuario);
-        vaCall.enqueue(new Callback<StatusRetorno>() {
+        vaCall.enqueue(new retrofit2.Callback<StatusRetorno>() {
             @Override
             public void onResponse(Call<StatusRetorno> call, Response<StatusRetorno> response) {
                 callback.execute(response.body());
@@ -89,9 +91,10 @@ public class UsuarioDao {
         });
     }
 
+    @Override
     public void excluir(Usuario usuario, final CallbackModel<StatusRetorno> callback){
         Call<StatusRetorno> vaCall = new RetrofitConfig().getUsuarioService().excluir(usuario.getCpf());
-        vaCall.enqueue(new Callback<StatusRetorno>() {
+        vaCall.enqueue(new retrofit2.Callback<StatusRetorno>() {
             @Override
             public void onResponse(Call<StatusRetorno> call, Response<StatusRetorno> response) {
                 callback.execute(response.body());

@@ -8,6 +8,6 @@ import java.util.List;
  * Created by rafae on 11/03/2018.
  */
 
-public interface CallbackModels<T> {
-    public void execute(StatusRetorno status, T resultados);
+public interface CallbackModels<T,E> {
+    public void execute(T status, E resultados);
 }

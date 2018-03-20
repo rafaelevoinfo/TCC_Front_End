@@ -1,11 +1,11 @@
 package rafael.freitas.tcc.ViewModel;
 
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import rafael.freitas.tcc.Model.BasicoDaoCrud;
 import rafael.freitas.tcc.Model.CallbackModel;
 import rafael.freitas.tcc.Model.CallbackModels;
 import rafael.freitas.tcc.Model.Usuario;
@@ -13,13 +13,14 @@ import rafael.freitas.tcc.Model.UsuarioDao;
 import rafael.freitas.tcc.Model.StatusRetorno;
 import rafael.freitas.tcc.Utils.Utils;
 
-public class UsuarioViewModel extends ViewModel {
+public class ViewModelUsuario extends ViewModelCrud<Usuario> {
     private MutableLiveData<List<Usuario>> clientes;
     private MutableLiveData<Usuario> cliente;
-    private UsuarioDao dao;
 
-    public UsuarioViewModel(){
-        dao = new UsuarioDao();
+
+    @Override
+    protected BasicoDaoCrud<Usuario, StatusRetorno> instanciarDao() {
+        return new UsuarioDao();
     }
 
     public MutableLiveData<Usuario> getCliente(){
@@ -29,12 +30,13 @@ public class UsuarioViewModel extends ViewModel {
         return  cliente;
     }
 
-    public MutableLiveData<List<Usuario>> pesquisarClientes(String cpfOuNome) {
+    @Override
+    public MutableLiveData<List<Usuario>> buscar(String cpfOuNome) {
         if (clientes == null){
             clientes = new MutableLiveData<List<Usuario>>();
         }
 
-        dao.pesquisarClientes(cpfOuNome, new CallbackModels<List<Usuario>>() {
+        dao.buscar(cpfOuNome, new CallbackModels<StatusRetorno, List<Usuario>>() {
             @Override
             public void execute(StatusRetorno status, List<Usuario> resultados) {
                 if (resultados != null){
@@ -48,15 +50,16 @@ public class UsuarioViewModel extends ViewModel {
         return clientes;
     }
 
-    public void pesquisarClienteCPF(String cpf){
-        dao.carregarCliente(cpf, new CallbackModel<Usuario>() {
+    public void buscarPorCpf(String cpf){
+        ((UsuarioDao)dao).buscarPorCpf(cpf, new CallbackModel<Usuario>() {
             @Override
             public void execute(Usuario resultado) {
-                UsuarioViewModel.this.getCliente().setValue(resultado);
+                ViewModelUsuario.this.getCliente().setValue(resultado);
             }
         });
     }
 
+    @Override
     public void salvar(Usuario usuario, CallbackModel<StatusRetorno> callback){
         if (!Utils.validarEmail(usuario.getEmail())){
             callback.execute(new StatusRetorno("E-Mail inválido"));
@@ -70,6 +73,7 @@ public class UsuarioViewModel extends ViewModel {
         dao.salvar(usuario,callback);
     }
 
+    @Override
     public void excluir(Usuario usuario, final CallbackModel<StatusRetorno> callback){
         dao.excluir(usuario, callback);
     }

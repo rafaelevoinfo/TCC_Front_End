@@ -5,5 +5,5 @@ package rafael.freitas.tcc.Model;
  */
 
 public interface CallbackModel<T> {
-    public void execute(T resultado);
+    void execute(T resultado);
 }

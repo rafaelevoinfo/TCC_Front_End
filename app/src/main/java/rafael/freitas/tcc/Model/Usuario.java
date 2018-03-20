@@ -2,7 +2,7 @@ package rafael.freitas.tcc.Model;
 
 import java.io.Serializable;
 
-public class Usuario extends Modelo implements Serializable{
+public class Usuario implements Serializable{
     private String cpf;
     private String nome;
     private String endereco;

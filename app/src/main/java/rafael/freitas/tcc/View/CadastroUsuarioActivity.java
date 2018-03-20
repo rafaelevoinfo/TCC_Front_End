@@ -21,9 +21,9 @@ import rafael.freitas.tcc.Model.Usuario;
 import rafael.freitas.tcc.Model.StatusRetorno;
 import rafael.freitas.tcc.R;
 import rafael.freitas.tcc.Utils.Utils;
-import rafael.freitas.tcc.ViewModel.UsuarioViewModel;
+import rafael.freitas.tcc.ViewModel.ViewModelUsuario;
 
-public class CadastroUsuarioActivity extends AppCompatActivity {
+public class CadastroUsuarioActivity extends CrudActivity<Usuario> {
 
     public static final String CPF = "CPF";
     public static final int RESULTADO = 0;
@@ -36,10 +36,9 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
     private EditText edtEstado;
     private EditText edtMunicipio;
     private EditText edtTelefone;
-    private ProgressBar pbProgressoSalvar;
+
 
     private Usuario usuario;
-    private UsuarioViewModel viewModel;
     private boolean inserindo;
 
     @Override
@@ -47,10 +46,24 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cadastro_usuario);
 
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        getComponentes();
+
+        viewModel = ViewModelProviders.of(this).get(ViewModelUsuario.class);
+
+        Intent it = getIntent();
+        inserindo = it.getStringExtra(CPF) == null;
+        if (!inserindo) {
+            addObservers();
+            ((ViewModelUsuario)viewModel).buscarPorCpf(it.getStringExtra(CPF));
+        }
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void getComponentes() {
         edtCpf = (EditText) findViewById(R.id.edtCpf);
         edtNome = (EditText) findViewById(R.id.edtNome);
         edtEmail = (EditText) findViewById(R.id.edtEmail);
@@ -60,36 +73,10 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
         edtTelefone = (EditText) findViewById(R.id.edtTelefone);
         edtEstado = (EditText) findViewById(R.id.edtEstado);
         pbProgressoSalvar = (ProgressBar) findViewById(R.id.pbProgressoSalvar);
-
-        viewModel = ViewModelProviders.of(this).get(UsuarioViewModel.class);
-        final Observer<Usuario> vaObserver = new Observer<Usuario>() {
-            @Override
-            public void onChanged(@Nullable Usuario cliente) {
-                if (cliente!=null) {
-                    CadastroUsuarioActivity.this.usuario = cliente;
-                    preencherEdits();
-                }else{
-                    //Algo deu errado e nao achou o usuario
-                    Toast.makeText(CadastroUsuarioActivity.this,"Nao foi possível carregar as informações do usuario",Toast.LENGTH_LONG).show();
-                }
-            }
-        };
-
-        Intent it = getIntent();
-        inserindo = it.getStringExtra(CPF) == null;
-        if (!inserindo) {
-            //Carregando as informações do usuario
-            MutableLiveData<Usuario> vaLiveData = viewModel.getCliente();
-            vaLiveData.observe(this, vaObserver);
-
-            viewModel.pesquisarClienteCPF(it.getStringExtra(CPF));
-        }
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void preencherEdits() {
-        if (usuario !=null) {
+        if (usuario != null) {
             edtCpf.setText(usuario.getCpf());
             edtNome.setText(usuario.getNome());
             edtEstado.setText(usuario.getEstado());
@@ -100,47 +87,41 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
         }
     }
 
-    private boolean validarDados(){
+    @Override
+    public boolean validarDados() {
         if (TextUtils.isEmpty(edtCpf.getText().toString())) {
             edtCpf.setError(getString(R.string.error_field_required));
             edtCpf.requestFocus();
             return false;
-        }
-        if (TextUtils.isEmpty(edtNome.getText().toString())) {
+        }else if (TextUtils.isEmpty(edtNome.getText().toString())) {
             edtNome.setError(getString(R.string.error_field_required));
             edtNome.requestFocus();
             return false;
-        }
-        if (TextUtils.isEmpty(edtEmail.getText().toString())) {
+        } else if (TextUtils.isEmpty(edtEmail.getText().toString())) {
             edtEmail.setError(getString(R.string.error_field_required));
             edtEmail.requestFocus();
             return false;
-        }
-        if (TextUtils.isEmpty(edtSenha.getText().toString())) {
+        } else if (TextUtils.isEmpty(edtSenha.getText().toString())) {
             edtSenha.setError(getString(R.string.error_field_required));
             edtSenha.requestFocus();
             return false;
+        } else {
+            return true;
         }
-        return true;
     }
 
-    public boolean preencherCliente(){
-        if (validarDados()) {
-            if (inserindo)
-                usuario = new Usuario();
+    public void preencherCliente() {
+        if (inserindo)
+            usuario = new Usuario();
 
-            usuario.setCpf(edtCpf.getText().toString());
-            usuario.setNome(edtNome.getText().toString());
-            usuario.setEstado(edtEstado.getText().toString());
-            usuario.setMunicipio(edtMunicipio.getText().toString());
-            usuario.setEndereco(edtEndereco.getText().toString());
-            usuario.setTelefone(edtTelefone.getText().toString());
-            usuario.setEmail(edtEmail.getText().toString());
-            usuario.setSenha(edtSenha.getText().toString());
-            return true;
-        }else {
-            return false;
-        }
+        usuario.setCpf(edtCpf.getText().toString());
+        usuario.setNome(edtNome.getText().toString());
+        usuario.setEstado(edtEstado.getText().toString());
+        usuario.setMunicipio(edtMunicipio.getText().toString());
+        usuario.setEndereco(edtEndereco.getText().toString());
+        usuario.setTelefone(edtTelefone.getText().toString());
+        usuario.setEmail(edtEmail.getText().toString());
+        usuario.setSenha(edtSenha.getText().toString());
     }
 
     @Override
@@ -157,28 +138,33 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
                 this.finish();
                 return true;
             case R.id.menu_salvar_usuario:
-                if (preencherCliente()) {
-                    showProgress(true);
-                    CadastroUsuarioActivity.this.viewModel.salvar(CadastroUsuarioActivity.this.usuario, new CallbackModel<StatusRetorno>() {
-                        @Override
-                        public void execute(StatusRetorno resultado) {
-                            if (!resultado.getStatus().equals(Utils.STATUS_OK)) {
-                                showProgress(false);
-                                Toast.makeText(CadastroUsuarioActivity.this, resultado.getStatus(), Toast.LENGTH_LONG).show();
-                            } else {
-                                CadastroUsuarioActivity.this.finish();
-                            }
-                        }
-                    });
-                }
+                preencherCliente();
+                salvar(usuario);
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    private void showProgress(boolean show) {
-        pbProgressoSalvar.setVisibility(show ? View.VISIBLE : View.GONE);
-    }
 
+    @Override
+    protected void addObservers() {
+        final Observer<Usuario> vaObserver = new Observer<Usuario>() {
+            @Override
+            public void onChanged(@Nullable Usuario cliente) {
+                if (cliente != null) {
+                    CadastroUsuarioActivity.this.usuario = cliente;
+                    preencherEdits();
+                } else {
+                    //Algo deu errado e nao achou o usuario
+                    Toast.makeText(CadastroUsuarioActivity.this, "Nao foi possível carregar as informações do usuario", Toast.LENGTH_LONG).show();
+                }
+            }
+        };
+
+        //Carregando as informações do usuario
+        MutableLiveData<Usuario> vaLiveData = ((ViewModelUsuario)viewModel).getCliente();
+        vaLiveData.observe(this, vaObserver);
+    }
 }

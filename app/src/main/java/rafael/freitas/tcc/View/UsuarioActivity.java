@@ -29,25 +29,23 @@ import rafael.freitas.tcc.Model.Usuario;
 import rafael.freitas.tcc.Model.StatusRetorno;
 import rafael.freitas.tcc.R;
 import rafael.freitas.tcc.Utils.Utils;
-import rafael.freitas.tcc.ViewModel.UsuarioViewModel;
+import rafael.freitas.tcc.ViewModel.ViewModelUsuario;
 
 import static rafael.freitas.tcc.R.id;
 import static rafael.freitas.tcc.R.layout;
 
-public class UsuarioActivity extends AppCompatActivity {
-    private UsuarioViewModel usuarioViewModel;
+public class UsuarioActivity extends ListaActivity<Usuario> {
+    private ViewModelUsuario viewModelUsuario;
     private ListView lvClientes;
-    //private RecyclerView lvClientes;
     private UsuarioAdapter adapter;
     private SearchView searchView;
     private List<Usuario> usuarios;
-    private ProgressBar pbProgressoPesquisa;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(layout.activity_usuario);
-
 
         Toolbar toolbar = (Toolbar) findViewById(id.toolbar);
         setSupportActionBar(toolbar);
@@ -59,12 +57,25 @@ public class UsuarioActivity extends AppCompatActivity {
         //Lista que ira armazenar todos os usuarios que sera exibidos na tela
         usuarios = new ArrayList<>();
         //Pegando a referencia ao ModelView
-        usuarioViewModel = ViewModelProviders.of(this).get(UsuarioViewModel.class);
+        viewModelUsuario = ViewModelProviders.of(this).get(ViewModelUsuario.class);
+
+        addObservers();
+
+        criarAdapter();
+
+        addListeners();
+
+        handleIntent(getIntent());
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    protected void addObservers(){
         //Solicita que todos os usuarios sejam carregados
-        MutableLiveData<List<Usuario>> vaLiveData = usuarioViewModel.pesquisarClientes("");
+        MutableLiveData<List<Usuario>> vaLiveData = viewModelUsuario.buscar("");
 
         //Observer que sera notificado toda vez que a lista de usuarios for alterada
-        final Observer<List<Usuario>> vaObserver = new Observer<List<Usuario>>() {
+        final Observer<List<Usuario>> vaObserverClientes = new Observer<List<Usuario>>() {
             @Override
             public void onChanged(@Nullable List<Usuario> clientes) {
                 showProgress(false);
@@ -74,8 +85,10 @@ public class UsuarioActivity extends AppCompatActivity {
             }
         };
 
-        vaLiveData.observe(this, vaObserver);
+        vaLiveData.observe(this, vaObserverClientes);
+    }
 
+    protected void criarAdapter(){
         adapter = new UsuarioAdapter(this, R.layout.list_text_img, usuarios, new CallbackModel<Usuario>() {
             @Override
             public void execute(final Usuario usuario) {
@@ -85,7 +98,7 @@ public class UsuarioActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 showProgress(true);
-                                usuarioViewModel.excluir(usuario, new CallbackModel<StatusRetorno>() {
+                                viewModelUsuario.excluir(usuario, new CallbackModel<StatusRetorno>() {
                                     @Override
                                     public void execute(StatusRetorno resultado) {
                                         showProgress(false);
@@ -105,7 +118,9 @@ public class UsuarioActivity extends AppCompatActivity {
         });
 
         lvClientes.setAdapter(adapter);
+    }
 
+    protected void addListeners(){
         //Setando evento que sera disparado ao tocar em um item da lista
         lvClientes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -127,16 +142,12 @@ public class UsuarioActivity extends AppCompatActivity {
                 startActivityForResult(intent, CadastroUsuarioActivity.RESULTADO);
             }
         });
-
-        handleIntent(getIntent());
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        usuarioViewModel.pesquisarClientes("");
+        viewModelUsuario.buscar("");
         fecharPesquisa();
     }
 
@@ -156,12 +167,8 @@ public class UsuarioActivity extends AppCompatActivity {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             //Realizando a pesquisa pelo filtro especificado pelo usuario
-            usuarioViewModel.pesquisarClientes(query);
+            viewModelUsuario.buscar(query);
         }
-    }
-
-    private void showProgress(boolean show) {
-        pbProgressoPesquisa.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -179,7 +186,7 @@ public class UsuarioActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 showProgress(true);
-                usuarioViewModel.pesquisarClientes(s);
+                viewModelUsuario.buscar(s);
                 return true;
             }
 
@@ -187,7 +194,7 @@ public class UsuarioActivity extends AppCompatActivity {
             public boolean onQueryTextChange(String s) {
                 if (s.equals("")) {
                     showProgress(true);
-                    usuarioViewModel.pesquisarClientes("");
+                    viewModelUsuario.buscar("");
                     return true;
                 } else {
                     return false;
