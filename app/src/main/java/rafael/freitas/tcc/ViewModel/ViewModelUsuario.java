@@ -17,10 +17,14 @@ public class ViewModelUsuario extends ViewModelCrud<Usuario> {
     private MutableLiveData<List<Usuario>> clientes;
     private MutableLiveData<Usuario> cliente;
 
+    @Override
+    protected BasicoDaoCrud<Usuario> instanciarDao() {
+        return new UsuarioDao();
+    }
 
     @Override
-    protected BasicoDaoCrud<Usuario, StatusRetorno> instanciarDao() {
-        return new UsuarioDao();
+    public UsuarioDao getDao(){
+        return ((UsuarioDao) super.getDao());
     }
 
     public MutableLiveData<Usuario> getCliente(){
@@ -36,7 +40,7 @@ public class ViewModelUsuario extends ViewModelCrud<Usuario> {
             clientes = new MutableLiveData<List<Usuario>>();
         }
 
-        dao.buscar(cpfOuNome, new CallbackModels<StatusRetorno, List<Usuario>>() {
+        getDao().buscar(cpfOuNome, new CallbackModels<StatusRetorno, List<Usuario>>() {
             @Override
             public void execute(StatusRetorno status, List<Usuario> resultados) {
                 if (resultados != null){
@@ -51,7 +55,7 @@ public class ViewModelUsuario extends ViewModelCrud<Usuario> {
     }
 
     public void buscarPorCpf(String cpf){
-        ((UsuarioDao)dao).buscarPorCpf(cpf, new CallbackModel<Usuario>() {
+        getDao().buscarPorCpf(cpf, new CallbackModel<Usuario>() {
             @Override
             public void execute(Usuario resultado) {
                 ViewModelUsuario.this.getCliente().setValue(resultado);
@@ -70,11 +74,11 @@ public class ViewModelUsuario extends ViewModelCrud<Usuario> {
         }
         //Vamos criptografar a senha para enviala ao webservice
         usuario.setSenha(Utils.md5(usuario.getSenha()));
-        dao.salvar(usuario,callback);
+        getDao().salvar(usuario,callback);
     }
 
     @Override
     public void excluir(Usuario usuario, final CallbackModel<StatusRetorno> callback){
-        dao.excluir(usuario, callback);
+        getDao().excluir(usuario, callback);
     }
 }

@@ -2,6 +2,7 @@ package rafael.freitas.tcc.ViewModel;
 
 import android.arch.lifecycle.ViewModel;
 
+import rafael.freitas.tcc.Model.BasicoDao;
 import rafael.freitas.tcc.Model.BasicoDaoCrud;
 import rafael.freitas.tcc.Model.StatusRetorno;
 
@@ -10,11 +11,15 @@ import rafael.freitas.tcc.Model.StatusRetorno;
  */
 
 public abstract class ViewModelBasico<T> extends ViewModel {
-    protected BasicoDaoCrud<T, StatusRetorno> dao;
+    private BasicoDao<T> dao;
 
     public ViewModelBasico() {
         dao = instanciarDao();
     }
 
-    protected abstract BasicoDaoCrud<T, StatusRetorno> instanciarDao();
+    public BasicoDao<T> getDao(){
+        return dao;
+    }
+
+    protected abstract BasicoDao<T> instanciarDao();
 }

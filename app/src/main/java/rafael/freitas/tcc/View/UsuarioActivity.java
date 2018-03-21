@@ -3,6 +3,7 @@ package rafael.freitas.tcc.View;
 import android.app.SearchManager;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -29,13 +30,13 @@ import rafael.freitas.tcc.Model.Usuario;
 import rafael.freitas.tcc.Model.StatusRetorno;
 import rafael.freitas.tcc.R;
 import rafael.freitas.tcc.Utils.Utils;
+import rafael.freitas.tcc.ViewModel.ViewModelBasico;
 import rafael.freitas.tcc.ViewModel.ViewModelUsuario;
 
 import static rafael.freitas.tcc.R.id;
 import static rafael.freitas.tcc.R.layout;
 
 public class UsuarioActivity extends ListaActivity<Usuario> {
-    private ViewModelUsuario viewModelUsuario;
     private ListView lvClientes;
     private UsuarioAdapter adapter;
     private SearchView searchView;
@@ -56,8 +57,7 @@ public class UsuarioActivity extends ListaActivity<Usuario> {
 
         //Lista que ira armazenar todos os usuarios que sera exibidos na tela
         usuarios = new ArrayList<>();
-        //Pegando a referencia ao ModelView
-        viewModelUsuario = ViewModelProviders.of(this).get(ViewModelUsuario.class);
+
 
         addObservers();
 
@@ -72,7 +72,7 @@ public class UsuarioActivity extends ListaActivity<Usuario> {
 
     protected void addObservers(){
         //Solicita que todos os usuarios sejam carregados
-        MutableLiveData<List<Usuario>> vaLiveData = viewModelUsuario.buscar("");
+        MutableLiveData<List<Usuario>> vaLiveData = getViewModel().buscar("");
 
         //Observer que sera notificado toda vez que a lista de usuarios for alterada
         final Observer<List<Usuario>> vaObserverClientes = new Observer<List<Usuario>>() {
@@ -98,7 +98,7 @@ public class UsuarioActivity extends ListaActivity<Usuario> {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 showProgress(true);
-                                viewModelUsuario.excluir(usuario, new CallbackModel<StatusRetorno>() {
+                                getViewModel().excluir(usuario, new CallbackModel<StatusRetorno>() {
                                     @Override
                                     public void execute(StatusRetorno resultado) {
                                         showProgress(false);
@@ -138,16 +138,20 @@ public class UsuarioActivity extends ListaActivity<Usuario> {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(UsuarioActivity.this, CadastroUsuarioActivity.class);
-                startActivityForResult(intent, CadastroUsuarioActivity.RESULTADO);
+                incluirUsuario();
             }
         });
+    }
+
+    private void incluirUsuario(){
+        Intent intent = new Intent(UsuarioActivity.this, CadastroUsuarioActivity.class);
+        startActivityForResult(intent, CadastroUsuarioActivity.RESULTADO);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        viewModelUsuario.buscar("");
+        getViewModel().buscar("");
         fecharPesquisa();
     }
 
@@ -167,7 +171,7 @@ public class UsuarioActivity extends ListaActivity<Usuario> {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             //Realizando a pesquisa pelo filtro especificado pelo usuario
-            viewModelUsuario.buscar(query);
+            getViewModel().buscar(query);
         }
     }
 
@@ -186,7 +190,7 @@ public class UsuarioActivity extends ListaActivity<Usuario> {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 showProgress(true);
-                viewModelUsuario.buscar(s);
+                getViewModel().buscar(s);
                 return true;
             }
 
@@ -194,7 +198,7 @@ public class UsuarioActivity extends ListaActivity<Usuario> {
             public boolean onQueryTextChange(String s) {
                 if (s.equals("")) {
                     showProgress(true);
-                    viewModelUsuario.buscar("");
+                    getViewModel().buscar("");
                     return true;
                 } else {
                     return false;
@@ -205,5 +209,13 @@ public class UsuarioActivity extends ListaActivity<Usuario> {
         return true;
     }
 
+    public ViewModelUsuario getViewModel(){
+        return (ViewModelUsuario) super.getViewModel();
+    }
 
+
+    @Override
+    protected ViewModelBasico<Usuario> instanciarViewModel() {
+        return ViewModelProviders.of(this).get(ViewModelUsuario.class);
+    }
 }

@@ -20,10 +20,15 @@ public abstract class CrudActivity<T> extends BasicaActivity<T> {
     protected abstract void addObservers();
     protected abstract boolean validarDados();
 
+    @Override
+    public ViewModelCrud<T> getViewModel(){
+        return (ViewModelCrud)super.getViewModel();
+    }
+
     public void salvar(T obj){
         if (validarDados()) {
             showProgress(true);
-            ((ViewModelCrud) viewModel).salvar(obj, new CallbackModel<StatusRetorno>() {
+            getViewModel().salvar(obj, new CallbackModel<StatusRetorno>() {
                 @Override
                 public void execute(StatusRetorno resultado) {
                     showProgress(false);

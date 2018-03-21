@@ -13,11 +13,18 @@ import rafael.freitas.tcc.Model.StatusRetorno;
  * Created by rafae on 19/03/2018.
  */
 
-public abstract class ViewModelCrud<T> extends ViewModelBasico {
+public abstract class ViewModelCrud<T> extends ViewModelBasico<T> {
+
+    @Override
+    public BasicoDaoCrud<T> getDao(){
+        return ((BasicoDaoCrud<T>) super.getDao());
+    }
 
     public abstract MutableLiveData<List<T>> buscar(String filtro);
 
     public abstract void salvar(T usuario, CallbackModel<StatusRetorno> callback);
 
     public abstract void excluir(T usuario, final CallbackModel<StatusRetorno> callback);
+
+
 }

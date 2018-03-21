@@ -12,27 +12,7 @@ import retrofit2.Response;
  * Created by rafae on 12/03/2018.
  */
 
-public class UsuarioDao extends BasicoDaoCrud<Usuario,StatusRetorno> {
-    public void autenticar(String email, String senha, final CallbackModel<StatusRetorno> callback) {
-        String vaSenhaCripto = Utils.md5(senha);
-        String vaCredenciais = email + ":" + vaSenhaCripto;
-        String vaAuth = "Basic " + Base64.encodeToString(vaCredenciais.getBytes(), Base64.NO_WRAP);
-
-        Call<StatusRetorno> vaCall = new RetrofitConfig().getUsuarioService().autenticar(vaAuth);
-        vaCall.enqueue(new retrofit2.Callback<StatusRetorno>() {
-            @Override
-            public void onResponse(Call<StatusRetorno> call, Response<StatusRetorno> response) {
-                callback.execute(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<StatusRetorno> call, Throwable t) {
-                StatusRetorno vaStatus = new StatusRetorno();
-                vaStatus.setStatus(t.getMessage());
-                callback.execute(vaStatus);
-            }
-        });
-    }
+public class UsuarioDao extends BasicoDaoCrud<Usuario> {
 
     @Override
     public void buscar(String filtro, final CallbackModels<StatusRetorno, List<Usuario>> callback) {

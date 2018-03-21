@@ -11,5 +11,14 @@ import rafael.freitas.tcc.ViewModel.ViewModelBasico;
  */
 
 public abstract class BasicaActivity<T> extends AppCompatActivity {
-    protected ViewModelBasico<T> viewModel;
+    private ViewModelBasico<T> viewModel;
+
+    protected abstract ViewModelBasico<T> instanciarViewModel();
+
+    public ViewModelBasico<T> getViewModel() {
+        if (viewModel == null) {
+            viewModel = instanciarViewModel();
+        }
+        return viewModel;
+    }
 }

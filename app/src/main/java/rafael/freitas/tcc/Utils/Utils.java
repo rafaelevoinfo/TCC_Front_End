@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
  * Created by rafae on 10/03/2018.
  */
 
-public class Utils {
+public abstract class Utils {
     public static final String STATUS_OK = "OK";
 
     public static final String md5(final String s) {

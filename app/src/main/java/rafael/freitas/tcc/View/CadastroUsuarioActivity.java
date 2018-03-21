@@ -21,6 +21,8 @@ import rafael.freitas.tcc.Model.Usuario;
 import rafael.freitas.tcc.Model.StatusRetorno;
 import rafael.freitas.tcc.R;
 import rafael.freitas.tcc.Utils.Utils;
+import rafael.freitas.tcc.ViewModel.ViewModelBasico;
+import rafael.freitas.tcc.ViewModel.ViewModelCrud;
 import rafael.freitas.tcc.ViewModel.ViewModelUsuario;
 
 public class CadastroUsuarioActivity extends CrudActivity<Usuario> {
@@ -51,16 +53,24 @@ public class CadastroUsuarioActivity extends CrudActivity<Usuario> {
 
         getComponentes();
 
-        viewModel = ViewModelProviders.of(this).get(ViewModelUsuario.class);
-
         Intent it = getIntent();
         inserindo = it.getStringExtra(CPF) == null;
         if (!inserindo) {
             addObservers();
-            ((ViewModelUsuario)viewModel).buscarPorCpf(it.getStringExtra(CPF));
+            getViewModel().buscarPorCpf(it.getStringExtra(CPF));
         }
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    protected ViewModelBasico<Usuario> instanciarViewModel(){
+        return ViewModelProviders.of(this).get(ViewModelUsuario.class);
+    }
+
+    @Override
+    public ViewModelUsuario getViewModel(){
+        return (ViewModelUsuario) super.getViewModel();
     }
 
     private void getComponentes() {
@@ -164,7 +174,7 @@ public class CadastroUsuarioActivity extends CrudActivity<Usuario> {
         };
 
         //Carregando as informações do usuario
-        MutableLiveData<Usuario> vaLiveData = ((ViewModelUsuario)viewModel).getCliente();
+        MutableLiveData<Usuario> vaLiveData = getViewModel().getCliente();
         vaLiveData.observe(this, vaObserver);
     }
 }

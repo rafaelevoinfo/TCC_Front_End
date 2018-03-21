@@ -22,14 +22,16 @@ import android.widget.Toast;
 
 import rafael.freitas.tcc.Model.CallbackModel;
 import rafael.freitas.tcc.Model.StatusRetorno;
+import rafael.freitas.tcc.Model.Usuario;
 import rafael.freitas.tcc.R;
 import rafael.freitas.tcc.Utils.Utils;
 import rafael.freitas.tcc.ViewModel.ViewModelAutenticacao;
+import rafael.freitas.tcc.ViewModel.ViewModelBasico;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BasicaActivity<Usuario> {
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -41,14 +43,13 @@ public class LoginActivity extends AppCompatActivity {
     private View mProgressView;
     private View mLoginFormView;
 
-    private ViewModelAutenticacao viewModelAutenticacao;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-      //  getActionBar().setTitle(getResources().getString(R.string.app_bemvindo));
-        // Set up the login form.
+
+        getSupportActionBar().setTitle(R.string.app_bemvindo);
+
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -73,10 +74,6 @@ public class LoginActivity extends AppCompatActivity {
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
-        viewModelAutenticacao = ViewModelProviders.of(this).get(ViewModelAutenticacao.class);
-       /* FAutenticacaoViewModel.getUsers().observe(this, users -> {
-            // update UI
-        });*/
     }
 
 
@@ -123,7 +120,7 @@ public class LoginActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            viewModelAutenticacao.autenticar(mEmailView.getText().toString(), mPasswordView.getText().toString(), new CallbackModel<StatusRetorno>() {
+            getViewModel().autenticar(mEmailView.getText().toString(), mPasswordView.getText().toString(), new CallbackModel<StatusRetorno>() {
                 @Override
                 public void execute(StatusRetorno resultado) {
                     if (resultado != null) {
@@ -179,6 +176,15 @@ public class LoginActivity extends AppCompatActivity {
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
+    }
+
+    @Override
+    protected ViewModelBasico<Usuario> instanciarViewModel() {
+        return ViewModelProviders.of(this).get(ViewModelAutenticacao.class);
+    }
+
+    public ViewModelAutenticacao getViewModel(){
+        return (ViewModelAutenticacao)super.getViewModel();
     }
 }
 
