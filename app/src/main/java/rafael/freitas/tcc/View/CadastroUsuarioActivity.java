@@ -57,7 +57,7 @@ public class CadastroUsuarioActivity extends CrudActivity<Usuario> {
         inserindo = it.getStringExtra(CPF) == null;
         if (!inserindo) {
             addObservers();
-            getViewModel().buscarPorCpf(it.getStringExtra(CPF));
+            getViewModel().buscarPorPK(it.getStringExtra(CPF));
         }
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

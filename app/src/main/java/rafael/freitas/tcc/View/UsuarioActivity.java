@@ -3,7 +3,6 @@ package rafael.freitas.tcc.View;
 import android.app.SearchManager;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,7 +11,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -20,26 +18,23 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import rafael.freitas.tcc.Model.CallbackModel;
 import rafael.freitas.tcc.Model.Usuario;
-import rafael.freitas.tcc.Model.StatusRetorno;
 import rafael.freitas.tcc.R;
-import rafael.freitas.tcc.Utils.Utils;
 import rafael.freitas.tcc.ViewModel.ViewModelBasico;
 import rafael.freitas.tcc.ViewModel.ViewModelUsuario;
 
 import static rafael.freitas.tcc.R.id;
 import static rafael.freitas.tcc.R.layout;
 
-public class UsuarioActivity extends ListaActivity<Usuario> {
+public class UsuarioActivity extends ListaCrudActivity<Usuario> {
     private ListView lvClientes;
-    private UsuarioAdapter adapter;
-    private SearchView searchView;
+
+
     private List<Usuario> usuarios;
 
 
@@ -97,19 +92,7 @@ public class UsuarioActivity extends ListaActivity<Usuario> {
                         .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                showProgress(true);
-                                getViewModel().excluir(usuario, new CallbackModel<StatusRetorno>() {
-                                    @Override
-                                    public void execute(StatusRetorno resultado) {
-                                        showProgress(false);
-                                        if (!resultado.getStatus().equals(Utils.STATUS_OK)) {
-                                            Toast.makeText(UsuarioActivity.this, resultado.getStatus(), Toast.LENGTH_LONG).show();
-                                        }else{
-                                            UsuarioActivity.this.adapter.remove(usuario);
-                                            UsuarioActivity.this.adapter.notifyDataSetChanged();
-                                        }
-                                    }
-                                });
+                                excluir(usuario);
                             }
                         })
                         .setNegativeButton("Não", null)
@@ -126,10 +109,7 @@ public class UsuarioActivity extends ListaActivity<Usuario> {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Usuario usuario = (Usuario) adapterView.getItemAtPosition(i);
-                Intent it = new Intent(UsuarioActivity.this, CadastroUsuarioActivity.class);
-                it.putExtra(CadastroUsuarioActivity.CPF, usuario.getCpf());
-
-                startActivityForResult(it, CadastroUsuarioActivity.RESULTADO);
+                alterar(usuario);
             }
         });
 
@@ -138,12 +118,21 @@ public class UsuarioActivity extends ListaActivity<Usuario> {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                incluirUsuario();
+                incluir();
             }
         });
     }
 
-    private void incluirUsuario(){
+    @Override
+    protected void alterar(Usuario usuario){
+        Intent it = new Intent(UsuarioActivity.this, CadastroUsuarioActivity.class);
+        it.putExtra(CadastroUsuarioActivity.CPF, usuario.getCpf());
+
+        startActivityForResult(it, CadastroUsuarioActivity.RESULTADO);
+    }
+
+    @Override
+    protected void incluir(){
         Intent intent = new Intent(UsuarioActivity.this, CadastroUsuarioActivity.class);
         startActivityForResult(intent, CadastroUsuarioActivity.RESULTADO);
     }
@@ -155,25 +144,6 @@ public class UsuarioActivity extends ListaActivity<Usuario> {
         fecharPesquisa();
     }
 
-    private void fecharPesquisa() {
-        if (!searchView.isIconified()) {
-            searchView.setIconified(true);
-        }
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        setIntent(intent);
-        handleIntent(intent);
-    }
-
-    private void handleIntent(Intent intent) {
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            //Realizando a pesquisa pelo filtro especificado pelo usuario
-            getViewModel().buscar(query);
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -189,16 +159,14 @@ public class UsuarioActivity extends ListaActivity<Usuario> {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                showProgress(true);
-                getViewModel().buscar(s);
+                pesquisar(s);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
                 if (s.equals("")) {
-                    showProgress(true);
-                    getViewModel().buscar("");
+                    pesquisar("");
                     return true;
                 } else {
                     return false;

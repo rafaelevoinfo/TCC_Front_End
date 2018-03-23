@@ -9,7 +9,8 @@ public class RetrofitConfig {
 
     public RetrofitConfig() {
         this.retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2/tcc/index/")
+                //.baseUrl("http://10.0.2.2/tcc/index/") //Debug
+                .baseUrl("http://rafaelevoinfodeveloper.000webhostapp.com")
                 .addConverterFactory(JacksonConverterFactory.create())
                 .build();
     }

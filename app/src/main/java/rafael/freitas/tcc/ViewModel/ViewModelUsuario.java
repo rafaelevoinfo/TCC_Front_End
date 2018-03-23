@@ -54,8 +54,9 @@ public class ViewModelUsuario extends ViewModelCrud<Usuario> {
         return clientes;
     }
 
-    public void buscarPorCpf(String cpf){
-        getDao().buscarPorCpf(cpf, new CallbackModel<Usuario>() {
+    @Override
+    public void buscarPorPK(String pk){
+        getDao().buscarPorPk(pk, new CallbackModel<Usuario>() {
             @Override
             public void execute(Usuario resultado) {
                 ViewModelUsuario.this.getCliente().setValue(resultado);

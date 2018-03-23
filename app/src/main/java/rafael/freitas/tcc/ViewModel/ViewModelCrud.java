@@ -22,6 +22,8 @@ public abstract class ViewModelCrud<T> extends ViewModelBasico<T> {
 
     public abstract MutableLiveData<List<T>> buscar(String filtro);
 
+    public abstract void buscarPorPK(String pk);
+
     public abstract void salvar(T usuario, CallbackModel<StatusRetorno> callback);
 
     public abstract void excluir(T usuario, final CallbackModel<StatusRetorno> callback);

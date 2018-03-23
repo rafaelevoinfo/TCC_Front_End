@@ -35,8 +35,9 @@ public class UsuarioDao extends BasicoDaoCrud<Usuario> {
         });
     }
 
-    public void buscarPorCpf(String cpf, final CallbackModel<Usuario> callback) {
-        Call<List<Usuario>> vaCall = new RetrofitConfig().getUsuarioService().pesquisarUsuarios(cpf);
+    @Override
+    public void buscarPorPk(String pk, final CallbackModel<Usuario> callback) {
+        Call<List<Usuario>> vaCall = new RetrofitConfig().getUsuarioService().pesquisarUsuarios(pk);
         //NAO SE PODE USAR O .EXECUTE PQ NAS VERSOES 4.0 OU MAIOR DO ANDROID DA UMA EXCEPTION DE NetworkOnMainThreadException
         vaCall.enqueue(new retrofit2.Callback<List<Usuario>>() {
             @Override

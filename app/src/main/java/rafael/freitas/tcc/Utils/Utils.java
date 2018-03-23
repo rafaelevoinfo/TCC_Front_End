@@ -39,6 +39,7 @@ public abstract class Utils {
     }
 
     public static boolean validarCPF(String cpf){
+        cpf = cpf.replaceAll("\\.|-","");
         return cpf.length()==11;
     }
 }
