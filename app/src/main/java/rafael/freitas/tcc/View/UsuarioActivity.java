@@ -88,7 +88,7 @@ public class UsuarioActivity extends ListaCrudActivity<Usuario> {
             @Override
             public void execute(final Usuario usuario) {
                 new AlertDialog.Builder(UsuarioActivity.this)
-                        .setMessage("Confirma a exclusão do Usuario?")
+                        .setMessage("Confirma a exclusão do cliente?")
                         .setPositiveButton("Sim", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
