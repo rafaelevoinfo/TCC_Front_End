@@ -55,12 +55,25 @@ public class CadastroUsuarioActivity extends CrudActivity<Usuario> {
 
         Intent it = getIntent();
         inserindo = it.getStringExtra(CPF) == null;
+
+        configurarEdits();
+
         if (!inserindo) {
             addObservers();
             getViewModel().buscarPorPK(it.getStringExtra(CPF));
         }
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void configurarEdits(){
+        //Nao vamos permitir alterar o CPF
+        edtCpf.setEnabled(inserindo);
+        if (usuario!=null) {
+            //O admin não pode alterar o nome ou email
+            edtNome.setEnabled(inserindo || (!usuario.getNome().toUpperCase().equals("ADMIN")));
+            edtEmail.setEnabled(edtNome.isEnabled());
+        }
     }
 
     @Override
@@ -87,7 +100,8 @@ public class CadastroUsuarioActivity extends CrudActivity<Usuario> {
 
     private void preencherEdits() {
         if (usuario != null) {
-            edtCpf.setText(usuario.getCpf());
+            String cpf = usuario.getCpf().substring(0,3)+"."+usuario.getCpf().substring(3,6)+"."+usuario.getCpf().substring(6,9)+"-"+usuario.getCpf().substring(9);
+            edtCpf.setText(cpf);
             edtNome.setText(usuario.getNome());
             edtEstado.setText(usuario.getEstado());
             edtMunicipio.setText(usuario.getMunicipio());
@@ -165,6 +179,7 @@ public class CadastroUsuarioActivity extends CrudActivity<Usuario> {
             public void onChanged(@Nullable Usuario cliente) {
                 if (cliente != null) {
                     CadastroUsuarioActivity.this.usuario = cliente;
+                    configurarEdits();
                     preencherEdits();
                 } else {
                     //Algo deu errado e nao achou o usuario

@@ -73,73 +73,33 @@ public class LoginActivity extends BasicaActivity<Usuario> {
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-
     }
 
 
-    /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     */
     private void realizarLogin() {
-        // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
-
-        // Store values at the time of the login attempt.
+        //pegandos os valores dos edits
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
 
-        boolean cancel = false;
-        View focusView = null;
-
-        // Check for a valid password, if the user entered one.
-        if (TextUtils.isEmpty(password)) {
-            mPasswordView.setError(getString(R.string.error_field_required));
-            focusView = mPasswordView;
-            cancel = true;
-        }
-
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
-        } else if (!Utils.validarEmail(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
-        }
-
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            focusView.requestFocus();
-        } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgress(true);
-            getViewModel().autenticar(mEmailView.getText().toString(), mPasswordView.getText().toString(), new CallbackModel<StatusRetorno>() {
-                @Override
-                public void execute(StatusRetorno resultado) {
-                    if (resultado != null) {
-                        if (resultado.getStatus().equals(Utils.STATUS_OK)) {
-                            Intent intent = new Intent(LoginActivity.this, UsuarioActivity.class);
-                            startActivity(intent);
-                        } else {
-                            showProgress(false);
-                            Toast.makeText(LoginActivity.this.getApplicationContext(), resultado.getStatus(), Toast.LENGTH_LONG).show();
-                        }
+        //Exibe um progress bar enquanto aguarda resposta do servidor
+        showProgress(true);
+        //chama o model que ira se encarregar de dizer se o usuario e senha sao validos
+        getViewModel().autenticar(mEmailView.getText().toString(), mPasswordView.getText().toString(), new CallbackModel<StatusRetorno>() {
+            @Override
+            public void execute(StatusRetorno resultado) {
+                if (resultado != null) {
+                    if (resultado.getStatus().equals(Utils.STATUS_OK)) {
+                        Intent intent = new Intent(LoginActivity.this, UsuarioActivity.class);
+                        startActivity(intent);
                     } else {
                         showProgress(false);
+                        Toast.makeText(LoginActivity.this.getApplicationContext(), resultado.getStatus(), Toast.LENGTH_LONG).show();
                     }
+                } else {
+                    showProgress(false);
                 }
-            });
-            /*mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);*/
-        }
-
+            }
+        });
     }
 
     /**
@@ -183,8 +143,8 @@ public class LoginActivity extends BasicaActivity<Usuario> {
         return ViewModelProviders.of(this).get(ViewModelAutenticacao.class);
     }
 
-    public ViewModelAutenticacao getViewModel(){
-        return (ViewModelAutenticacao)super.getViewModel();
+    public ViewModelAutenticacao getViewModel() {
+        return (ViewModelAutenticacao) super.getViewModel();
     }
 }
 
