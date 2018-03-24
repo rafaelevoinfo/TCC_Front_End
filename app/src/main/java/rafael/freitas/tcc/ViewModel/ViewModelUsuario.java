@@ -17,16 +17,19 @@ public class ViewModelUsuario extends ViewModelCrud<Usuario> {
     private MutableLiveData<List<Usuario>> clientes;
     private MutableLiveData<Usuario> cliente;
 
+    //Instancia a classe DAO que nos dara acesso ao Webservice
     @Override
     protected BasicoDaoCrud<Usuario> instanciarDao() {
         return new UsuarioDao();
     }
 
+    //Retorna a classe dao criada em instanciarDao
     @Override
     public UsuarioDao getDao(){
         return ((UsuarioDao) super.getDao());
     }
 
+    //Retorna o objeto que ira realizar o binding
     public MutableLiveData<Usuario> getCliente(){
         if (cliente == null){
             cliente = new MutableLiveData<Usuario>();
@@ -44,6 +47,7 @@ public class ViewModelUsuario extends ViewModelCrud<Usuario> {
             @Override
             public void execute(StatusRetorno status, List<Usuario> resultados) {
                 if (resultados != null){
+                    //realiza o binding, avisando a view que a lista de clientes foi autalizada
                     clientes.setValue(resultados);
                 }else{
                     clientes.setValue(new ArrayList<Usuario>());

@@ -103,7 +103,7 @@ public class LoginActivity extends BasicaActivity<Usuario> {
     }
 
     /**
-     * Shows the progress UI and hides the login form.
+     * Exibe um progress bar.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
@@ -138,11 +138,13 @@ public class LoginActivity extends BasicaActivity<Usuario> {
         }
     }
 
+    //Cria a instancia do ViewModel
     @Override
     protected ViewModelBasico<Usuario> instanciarViewModel() {
         return ViewModelProviders.of(this).get(ViewModelAutenticacao.class);
     }
 
+    //retorna a instancia do viewModel
     public ViewModelAutenticacao getViewModel() {
         return (ViewModelAutenticacao) super.getViewModel();
     }

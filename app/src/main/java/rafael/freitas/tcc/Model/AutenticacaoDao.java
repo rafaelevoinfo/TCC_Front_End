@@ -31,6 +31,7 @@ public class AutenticacaoDao extends BasicoDao<Usuario> {
         });
     }
 
+    //O webservice faz autenticacao via Basic Authentication, portanto monto ela aqui
     @NonNull
     private String montarAutenticacaoBasica(String email, String senha) {
         String vaSenhaCripto = Utils.md5(senha);

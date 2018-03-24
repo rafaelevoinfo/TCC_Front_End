@@ -8,23 +8,23 @@ import rafael.freitas.tcc.Utils.Utils;
 import retrofit2.Call;
 import retrofit2.Response;
 
-/**
- * Created by rafae on 12/03/2018.
- */
 
 public class UsuarioDao extends BasicoDaoCrud<Usuario> {
 
     @Override
     public void buscar(String filtro, final CallbackModels<StatusRetorno, List<Usuario>> callback) {
         Call<List<Usuario>> vaCall = null;
+        //Usa o retrofit para pegar o objeto que ira consumir o webservice
         if (filtro.trim().isEmpty()) {
             vaCall = new RetrofitConfig().getUsuarioService().pesquisarUsuarios();
         } else {
             vaCall = new RetrofitConfig().getUsuarioService().pesquisarUsuarios(filtro);
         }
+        //Faz a requisicao ao webservice e quando finalizar invoca o metodo onResponse ou onFailure
         vaCall.enqueue(new retrofit2.Callback<List<Usuario>>() {
             @Override
             public void onResponse(Call<List<Usuario>> call, Response<List<Usuario>> response) {
+                //faz um callback para quem chamou essa funcao avisando-o da resposta recebida
                 callback.execute(new StatusRetorno(Utils.STATUS_OK), response.body());
             }
 

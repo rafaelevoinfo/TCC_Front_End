@@ -8,6 +8,7 @@ public class RetrofitConfig {
     private final Retrofit retrofit;
 
     public RetrofitConfig() {
+        //Configura o endereco do webservice
         this.retrofit = new Retrofit.Builder()
                 //.baseUrl("http://10.0.2.2/tcc/index/") //Debug
                 .baseUrl("http://rafaelevoinfodeveloper.esy.es")
